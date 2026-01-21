@@ -20,6 +20,11 @@ Thumbs.db
 
 # Node
 node_modules/
+dist/
+
+# npm
+.npm-cache
+package-lock.json
 
 # Personal configs (if any)
 personal/

@@ -1,256 +1,160 @@
 # Everything Claude Code
 
-**The complete collection of Claude Code configs from an Anthropic hackathon winner.**
+Multi-model agent orchestration framework for Claude Code.
 
-This repo contains production-ready agents, skills, hooks, commands, rules, and MCP configurations that I use daily with Claude Code. These configs evolved over 10+ months of intensive use building real products.
+## Installation
 
----
+### Option 1: Claude Code Plugin (Recommended)
 
-## Read the Full Guide First
+```bash
+# Add marketplace
+/plugin marketplace add https://github.com/affaan-m/everything-claude-code
 
-**Before diving into these configs, read the complete guide on X:**
+# Install plugin
+/plugin install everything-claude-code
 
-
-<img width="592" height="445" alt="image" src="https://github.com/user-attachments/assets/1a471488-59cc-425b-8345-5245c7efbcef" />
-
-
-**[The Shorthand Guide to Everything Claude Code](https://x.com/affaanmustafa/status/2012378465664745795)**
-
-
-
-The guide explains:
-- What each config type does and when to use it
-- How to structure your Claude Code setup
-- Context window management (critical for performance)
-- Parallel workflows and advanced techniques
-- The philosophy behind these configs
-
-**This repo is configs only! Tips, tricks and more examples are in my X articles and videos (links will be appended to this readme as it evolves).**
-
----
-
-## What's Inside
-
-```
-everything-claude-code/
-|-- agents/           # Specialized subagents for delegation
-|   |-- planner.md           # Feature implementation planning
-|   |-- architect.md         # System design decisions
-|   |-- tdd-guide.md         # Test-driven development
-|   |-- code-reviewer.md     # Quality and security review
-|   |-- security-reviewer.md # Vulnerability analysis
-|   |-- build-error-resolver.md
-|   |-- e2e-runner.md        # Playwright E2E testing
-|   |-- refactor-cleaner.md  # Dead code cleanup
-|   |-- doc-updater.md       # Documentation sync
-|
-|-- skills/           # Workflow definitions and domain knowledge
-|   |-- coding-standards.md         # Language best practices
-|   |-- backend-patterns.md         # API, database, caching patterns
-|   |-- frontend-patterns.md        # React, Next.js patterns
-|   |-- project-guidelines-example.md # Example project-specific skill
-|   |-- tdd-workflow/               # TDD methodology
-|   |-- security-review/            # Security checklist
-|   |-- clickhouse-io.md            # ClickHouse analytics
-|
-|-- commands/         # Slash commands for quick execution
-|   |-- tdd.md              # /tdd - Test-driven development
-|   |-- plan.md             # /plan - Implementation planning
-|   |-- e2e.md              # /e2e - E2E test generation
-|   |-- code-review.md      # /code-review - Quality review
-|   |-- build-fix.md        # /build-fix - Fix build errors
-|   |-- refactor-clean.md   # /refactor-clean - Dead code removal
-|   |-- test-coverage.md    # /test-coverage - Coverage analysis
-|   |-- update-codemaps.md  # /update-codemaps - Refresh docs
-|   |-- update-docs.md      # /update-docs - Sync documentation
-|
-|-- rules/            # Always-follow guidelines
-|   |-- security.md         # Mandatory security checks
-|   |-- coding-style.md     # Immutability, file organization
-|   |-- testing.md          # TDD, 80% coverage requirement
-|   |-- git-workflow.md     # Commit format, PR process
-|   |-- agents.md           # When to delegate to subagents
-|   |-- performance.md      # Model selection, context management
-|   |-- patterns.md         # API response formats, hooks
-|   |-- hooks.md            # Hook documentation
-|
-|-- hooks/            # Trigger-based automations
-|   |-- hooks.json          # PreToolUse, PostToolUse, Stop hooks
-|
-|-- mcp-configs/      # MCP server configurations
-|   |-- mcp-servers.json    # GitHub, Supabase, Vercel, Railway, etc.
-|
-|-- plugins/          # Plugin ecosystem documentation
-|   |-- README.md           # Plugins, marketplaces, skills guide
-|
-|-- examples/         # Example configurations
-    |-- CLAUDE.md           # Example project-level config
-    |-- user-CLAUDE.md      # Example user-level config (~/.claude/CLAUDE.md)
-    |-- statusline.json     # Custom status line config
+# Setup
+/ecc-setup
 ```
 
----
+### Option 2: NPM Package
+
+```bash
+npm install -g everything-claude-code
+
+# Setup globally
+ecc setup --global
+
+# Or setup for current project only
+ecc setup --local
+```
+
+### Option 3: Manual Installation
+
+```bash
+git clone https://github.com/affaan-m/everything-claude-code.git
+cd everything-claude-code
+npm install && npm run build
+
+# Copy to Claude config
+cp -r agents/ ~/.claude/agents/
+cp -r commands/ ~/.claude/commands/
+cp -r skills/ ~/.claude/skills/
+cp -r hooks/ ~/.claude/hooks/
+cp -r rules/ ~/.claude/rules/
+cp -r domain/ ~/.claude/domain/
+cp -r config/ ~/.claude/config/
+```
 
 ## Quick Start
 
-### 1. Copy what you need
-
 ```bash
-# Clone the repo
-git clone https://github.com/affaan-m/everything-claude-code.git
+# Initialize project domain files
+/dm-init
 
-# Copy agents to your Claude config
-cp everything-claude-code/agents/*.md ~/.claude/agents/
-
-# Copy rules
-cp everything-claude-code/rules/*.md ~/.claude/rules/
-
-# Copy commands
-cp everything-claude-code/commands/*.md ~/.claude/commands/
-
-# Copy skills
-cp -r everything-claude-code/skills/* ~/.claude/skills/
+# Or with planning document
+/dm-init docs/PRD.md
 ```
 
-### 2. Add hooks to settings.json
+## What It Does
 
-Copy the hooks from `hooks/hooks.json` to your `~/.claude/settings.json`.
+**Multi-Model Agent Team:**
+| Agent | Model | Purpose |
+|-------|-------|---------|
+| planner, architect | Gemini | Planning, system design |
+| frontend-engineer | Gemini | UI/UX |
+| backend-engineer | Claude | Code generation |
+| code-reviewer, security-reviewer | o3-mini | Analysis |
+| researcher | GPT-4o | Web search |
 
-### 3. Configure MCPs
+**Skills:**
+- `orchestrate` - Multi-agent coordination
+- `tdd-workflow` - Test-driven development
+- `security-review` - Vulnerability detection
+- `frontend-patterns` - React/Vue/Svelte/Angular
+- `backend-patterns` - Node/Python/Go/Java/Rust
 
-Copy desired MCP servers from `mcp-configs/mcp-servers.json` to your `~/.claude.json`.
+**Commands:**
+| Command | Purpose |
+|---------|---------|
+| `/dm-init` | Initialize project domain files |
+| `/dm-sync` | Sync domain files with code |
+| `/plan` | Create implementation plan |
+| `/tdd` | Test-driven development |
+| `/code-review` | Code quality review |
 
-**Important:** Replace `YOUR_*_HERE` placeholders with your actual API keys.
+## Configuration
 
-### 4. Read the guide
+### Stack Settings
 
-Seriously, [read the guide](https://x.com/affaanmustafa/status/2012378465664745795). These configs make 10x more sense with context.
+Edit `~/.claude/config/stack.yaml`:
 
----
-
-## Key Concepts
-
-### Agents
-
-Subagents handle delegated tasks with limited scope. Example:
-
-```markdown
----
-name: code-reviewer
-description: Reviews code for quality, security, and maintainability
-tools: Read, Grep, Glob, Bash
-model: opus
----
-
-You are a senior code reviewer...
+```yaml
+active:
+  language: "typescript"
+  frontend: "react"
+  frontend_framework: "nextjs"
+  backend: "node"
+  database: "postgresql"
 ```
 
-### Skills
+### Project Config
 
-Skills are workflow definitions invoked by commands or agents:
+Create `.claude/project-config.yaml`:
 
-```markdown
-# TDD Workflow
+```yaml
+project:
+  name: "My Project"
 
-1. Define interfaces first
-2. Write failing tests (RED)
-3. Implement minimal code (GREEN)
-4. Refactor (IMPROVE)
-5. Verify 80%+ coverage
+stack:
+  language: typescript
+  frontend: react
+  database: postgresql
+
+structure:
+  src/app: "Next.js pages"
+  src/components: "React components"
+  src/lib: "Utilities"
 ```
 
-### Hooks
+### MCP Servers
 
-Hooks fire on tool events. Example - warn about console.log:
+Add to `~/.claude.json`:
 
 ```json
 {
-  "matcher": "tool == \"Edit\" && tool_input.file_path matches \"\\\\.(ts|tsx|js|jsx)$\"",
-  "hooks": [{
-    "type": "command",
-    "command": "#!/bin/bash\ngrep -n 'console\\.log' \"$file_path\" && echo '[Hook] Remove console.log' >&2"
-  }]
+  "mcpServers": {
+    "openai": {
+      "command": "npx",
+      "args": ["-y", "@mzxrai/mcp-openai@latest"],
+      "env": { "OPENAI_API_KEY": "sk-..." }
+    }
+  }
 }
 ```
 
-### Rules
-
-Rules are always-follow guidelines. Keep them modular:
+## Structure
 
 ```
-~/.claude/rules/
-  security.md      # No hardcoded secrets
-  coding-style.md  # Immutability, file limits
-  testing.md       # TDD, coverage requirements
+├── agents/         # 20+ specialized AI agents
+├── commands/       # Slash commands
+├── skills/         # Reusable skill modules
+├── hooks/          # Automation triggers
+├── rules/          # Coding standards
+├── config/         # Stack configuration
+└── domain/         # Project domain templates
 ```
 
----
+## Supported Stacks
 
-## Contributing
+**Languages:** TypeScript, Python, Go, Java, Kotlin, Rust, C++, C
 
-**Contributions are welcome and encouraged.**
+**Frontend:** React, Vue, Svelte, Angular
 
-This repo is meant to be a community resource. If you have:
-- Useful agents or skills
-- Clever hooks
-- Better MCP configurations
-- Improved rules
+**Backend:** Node.js, Python, Go, Java, Kotlin, Rust
 
-Please contribute! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-### Ideas for Contributions
-
-- Language-specific skills (Python, Go, Rust patterns)
-- Framework-specific configs (Django, Rails, Laravel)
-- DevOps agents (Kubernetes, Terraform, AWS)
-- Testing strategies (different frameworks)
-- Domain-specific knowledge (ML, data engineering, mobile)
-
----
-
-## Background
-
-I've been using Claude Code since the experimental rollout. Won the Anthropic x Forum Ventures hackathon in Sep 2025 building [zenith.chat](https://zenith.chat) with [@DRodriguezFX](https://x.com/DRodriguezFX) - entirely using Claude Code.
-
-These configs are battle-tested across multiple production applications.
-
----
-
-## Important Notes
-
-### Context Window Management
-
-**Critical:** Don't enable all MCPs at once. Your 200k context window can shrink to 70k with too many tools enabled.
-
-Rule of thumb:
-- Have 20-30 MCPs configured
-- Keep under 10 enabled per project
-- Under 80 tools active
-
-Use `disabledMcpServers` in project config to disable unused ones.
-
-### Customization
-
-These configs work for my workflow. You should:
-1. Start with what resonates
-2. Modify for your stack
-3. Remove what you don't use
-4. Add your own patterns
-
----
-
-## Links
-
-- **Full Guide:** [The Shorthand Guide to Everything Claude Code](https://x.com/affaanmustafa/status/2012378465664745795)
-- **Follow:** [@affaanmustafa](https://x.com/affaanmustafa)
-- **zenith.chat:** [zenith.chat](https://zenith.chat)
-
----
+**Database:** PostgreSQL, MySQL, MongoDB, SQLite
 
 ## License
 
-MIT - Use freely, modify as needed, contribute back if you can.
-
----
-
-**Star this repo if it helps. Read the guide. Build something great.**
+MIT

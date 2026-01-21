@@ -1,5 +1,27 @@
 {
   "mcpServers": {
+    "_comment": "=== MULTI-MODEL AGENT TEAM ===",
+    
+    "openai": {
+      "command": "npx",
+      "args": ["-y", "@mzxrai/mcp-openai@latest"],
+      "env": {
+        "OPENAI_API_KEY": "YOUR_OPENAI_API_KEY"
+      },
+      "description": "OpenAI models - GPT-4o (researcher), o3-mini (code-reviewer, security-reviewer), o3 (performance-optimizer)"
+    },
+
+    "gemini": {
+      "command": "npx",
+      "args": ["-y", "github:aliargun/mcp-server-gemini"],
+      "env": {
+        "GEMINI_API_KEY": "YOUR_GEMINI_API_KEY"
+      },
+      "description": "Gemini models - planner, architect, frontend-engineer, ui-designer, database-architect, accessibility-expert, publisher"
+    },
+
+    "_comment2": "=== DEVELOPMENT TOOLS ===",
+
     "github": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-github"],

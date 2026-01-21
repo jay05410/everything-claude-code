@@ -1,31 +1,24 @@
-# Update Documentation
+# /update-docs
 
-Sync documentation from source-of-truth:
+Update project documentation (README, CONTRIBUTING, CHANGELOG, guides).
 
-1. Read package.json scripts section
-   - Generate scripts reference table
-   - Include descriptions from comments
+## Usage
 
-2. Read .env.example
-   - Extract all environment variables
-   - Document purpose and format
+```
+/update-docs
+```
 
-3. Generate docs/CONTRIB.md with:
-   - Development workflow
-   - Available scripts
-   - Environment setup
-   - Testing procedures
+## What It Does
 
-4. Generate docs/RUNBOOK.md with:
-   - Deployment procedures
-   - Monitoring and alerts
-   - Common issues and fixes
-   - Rollback procedures
+1. Syncs README.md with current code state
+2. Updates API documentation from JSDoc/comments
+3. Refreshes setup instructions
+4. Validates all links
 
-5. Identify obsolete documentation:
-   - Find docs not modified in 90+ days
-   - List for manual review
+## Agent
 
-6. Show diff summary
+This command invokes the `doc-updater` agent.
 
-Single source of truth: package.json and .env.example
+## Related
+
+- `/dm-sync` - For domain files (architecture, structure, design-system)
