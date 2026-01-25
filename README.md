@@ -1,159 +1,82 @@
 # Everything Claude Code
 
-Multi-model agent orchestration framework for Claude Code.
+Multi-model agent orchestration for Claude Code.
 
 ## Installation
 
-### Option 1: Claude Code Plugin (Recommended)
-
 ```bash
-# Add marketplace
-/plugin marketplace add https://github.com/affaan-m/everything-claude-code
-
-# Install plugin
+# Plugin (recommended)
 /plugin install everything-claude-code
 
-# Setup
-/ecc-setup
-```
-
-### Option 2: NPM Package
-
-```bash
+# Or NPM
 npm install -g everything-claude-code
-
-# Setup globally
 ecc setup --global
-
-# Or setup for current project only
-ecc setup --local
 ```
 
-### Option 3: Manual Installation
-
-```bash
-git clone https://github.com/affaan-m/everything-claude-code.git
-cd everything-claude-code
-npm install && npm run build
-
-# Copy to Claude config
-cp -r agents/ ~/.claude/agents/
-cp -r commands/ ~/.claude/commands/
-cp -r skills/ ~/.claude/skills/
-cp -r hooks/ ~/.claude/hooks/
-cp -r rules/ ~/.claude/rules/
-cp -r domain/ ~/.claude/domain/
-cp -r config/ ~/.claude/config/
-```
-
-## Quick Start
-
-```bash
-# Initialize project domain files
-/dm-init
-
-# Or with planning document
-/dm-init docs/PRD.md
-```
-
-## What It Does
-
-**Multi-Model Agent Team:**
-| Agent | Model | Purpose |
-|-------|-------|---------|
-| planner, architect | Gemini | Planning, system design |
-| frontend-engineer | Gemini | UI/UX |
-| backend-engineer | Claude | Code generation |
-| code-reviewer, security-reviewer | o3-mini | Analysis |
-| researcher | GPT-4o | Web search |
-
-**Skills:**
-- `orchestrate` - Multi-agent coordination
-- `tdd-workflow` - Test-driven development
-- `security-review` - Vulnerability detection
-- `frontend-patterns` - React/Vue/Svelte/Angular
-- `backend-patterns` - Node/Python/Go/Java/Rust
-
-**Commands:**
-| Command | Purpose |
-|---------|---------|
-| `/dm-init` | Initialize project domain files |
-| `/dm-sync` | Sync domain files with code |
-| `/plan` | Create implementation plan |
-| `/tdd` | Test-driven development |
-| `/code-review` | Code quality review |
-
-## Configuration
-
-### Stack Settings
-
-Edit `~/.claude/config/stack.yaml`:
-
-```yaml
-active:
-  language: "typescript"
-  frontend: "react"
-  frontend_framework: "nextjs"
-  backend: "node"
-  database: "postgresql"
-```
-
-### Project Config
-
-Create `.claude/project-config.yaml`:
-
-```yaml
-project:
-  name: "My Project"
-
-stack:
-  language: typescript
-  frontend: react
-  database: postgresql
-
-structure:
-  src/app: "Next.js pages"
-  src/components: "React components"
-  src/lib: "Utilities"
-```
-
-### MCP Servers
+## MCP Setup (Required)
 
 Add to `~/.claude.json`:
 
 ```json
 {
   "mcpServers": {
+    "gemini": {
+      "command": "npx",
+      "args": ["-y", "@aliargun/mcp-server-gemini"],
+      "env": { "GEMINI_API_KEY": "your-key" }
+    },
     "openai": {
       "command": "npx",
-      "args": ["-y", "@mzxrai/mcp-openai@latest"],
-      "env": { "OPENAI_API_KEY": "sk-..." }
+      "args": ["-y", "@mzxrai/mcp-openai"],
+      "env": { "OPENAI_API_KEY": "your-key" }
     }
   }
 }
 ```
 
+Get keys: [Gemini](https://aistudio.google.com/apikey) | [OpenAI](https://platform.openai.com/api-keys)
+
+## How It Works
+
+```
+Request → Orchestrator (Gemini) → Execution Plan → Agents → Checkpoints → Done
+```
+
+Non-trivial requests go through the orchestrator first, which analyzes intent and creates an execution plan with the right agents.
+
+## Agent → Model
+
+| Agent | Model | Purpose |
+|-------|-------|---------|
+| orchestrator | Gemini | Request analysis, planning |
+| planner | Gemini | Feature breakdown |
+| frontend-engineer | Gemini | UI components |
+| backend-engineer | Claude | API routes |
+| code-reviewer | o3-mini | Code quality |
+| security-reviewer | o3-mini | Vulnerabilities |
+| performance-optimizer | o3 | Bottlenecks |
+| researcher | GPT-4o | Documentation |
+
+## Stack Config
+
+Edit `~/.claude/config/stack.yaml`:
+
+```yaml
+active:
+  language: typescript
+  frontend: react
+  backend: node
+  database: postgresql
+```
+
 ## Structure
 
 ```
-├── agents/         # 20+ specialized AI agents
-├── commands/       # Slash commands
-├── skills/         # Reusable skill modules
-├── hooks/          # Automation triggers
-├── rules/          # Coding standards
-├── config/         # Stack configuration
-└── domain/         # Project domain templates
+agents/        # AI agents (orchestrator, planner, frontend-engineer, etc.)
+skills/        # Reusable workflows (tdd, security-review, etc.)
+rules/         # Coding standards
+config/        # Stack and MCP configuration
 ```
-
-## Supported Stacks
-
-**Languages:** TypeScript, Python, Go, Java, Kotlin, Rust, C++, C
-
-**Frontend:** React, Vue, Svelte, Angular
-
-**Backend:** Node.js, Python, Go, Java, Kotlin, Rust
-
-**Database:** PostgreSQL, MySQL, MongoDB, SQLite
 
 ## License
 

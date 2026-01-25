@@ -1,47 +1,59 @@
 # Performance Optimization
 
-## Model Selection Strategy
+## MCP Model Selection
 
-**Haiku 4.5** (90% of Sonnet capability, 3x cost savings):
-- Lightweight agents with frequent invocation
-- Pair programming and code generation
-- Worker agents in multi-agent systems
+| Model | Use For | Cost |
+|-------|---------|------|
+| Gemini | Planning, large context, frontend/UI | Low |
+| o3-mini | Code review, security analysis | Medium |
+| o3 | Deep reasoning, complex debugging | High |
+| GPT-4o | Research, web search | Medium |
+| Claude | Code generation, implementation | Default |
 
-**Sonnet 4.5** (Best coding model):
-- Main development work
-- Orchestrating multi-agent workflows
-- Complex coding tasks
+## Agent → Model Mapping
 
-**Opus 4.5** (Deepest reasoning):
-- Complex architectural decisions
-- Maximum reasoning requirements
-- Research and analysis tasks
+```
+High-volume tasks → Gemini (cheap, large context)
+Analysis tasks → o3-mini (fast, good reasoning)
+Complex tasks → o3 (deep reasoning)
+Research tasks → GPT-4o (web search)
+Implementation → Claude (coding strength)
+```
 
 ## Context Window Management
 
 Avoid last 20% of context window for:
 - Large-scale refactoring
-- Feature implementation spanning multiple files
-- Debugging complex interactions
+- Multi-file feature implementation
+- Complex debugging
 
-Lower context sensitivity tasks:
+Lower context sensitivity:
 - Single-file edits
-- Independent utility creation
+- Independent utilities
 - Documentation updates
-- Simple bug fixes
 
-## Ultrathink + Plan Mode
+## Parallel Execution
 
-For complex tasks requiring deep reasoning:
-1. Use `ultrathink` for enhanced thinking
-2. Enable **Plan Mode** for structured approach
-3. "Rev the engine" with multiple critique rounds
-4. Use split role sub-agents for diverse analysis
+ALWAYS parallelize independent operations:
+
+```
+# GOOD
+Promise.all([
+  fetchUsers(),
+  fetchProducts(),
+  fetchOrders()
+])
+
+# BAD
+users = await fetchUsers()
+products = await fetchProducts()
+orders = await fetchOrders()
+```
 
 ## Build Troubleshooting
 
 If build fails:
-1. Use **build-error-resolver** agent
+1. Use **error-resolver** agent
 2. Analyze error messages
 3. Fix incrementally
 4. Verify after each fix

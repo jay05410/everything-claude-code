@@ -192,13 +192,21 @@ ai:
 # -----------------------------------------------------------------------------
 # MCP SERVERS
 # -----------------------------------------------------------------------------
+# These MCP servers enable multi-model orchestration.
+# Configure in ~/.claude.json (global) or .claude.json (project)
 mcp:
-  openai:
-    package: "@mzxrai/mcp-openai@latest"
-    env_var: "OPENAI_API_KEY"
   gemini:
-    package: "github:aliargun/mcp-server-gemini"
+    package: "@anthropics/claude-code-mcp-server-gemini"
+    fallback_package: "@anthropic/claude-code-mcp-server-gemini"
+    community_package: "@anthropic/mcp-server-gemini"
     env_var: "GEMINI_API_KEY"
+    description: "Gemini API for planning, frontend, architecture"
+  openai:
+    package: "@anthropic/claude-code-mcp-server-openai"
+    fallback_package: "@openai/mcp-server"
+    community_package: "@mzxrai/mcp-openai"
+    env_var: "OPENAI_API_KEY"
+    description: "OpenAI API for o3, o3-mini, GPT-4o"
 
 # -----------------------------------------------------------------------------
 # AGENT MODEL ASSIGNMENTS

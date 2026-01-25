@@ -1,49 +1,57 @@
 # Agent Orchestration
 
-## Available Agents
+## Orchestrator-First Flow
 
-Located in `~/.claude/agents/`:
+For non-trivial requests, ALWAYS use orchestrator first:
 
-| Agent | Purpose | When to Use |
-|-------|---------|-------------|
-| planner | Implementation planning | Complex features, refactoring |
-| architect | System design | Architectural decisions |
-| tdd-guide | Test-driven development | New features, bug fixes |
-| code-reviewer | Code review | After writing code |
-| security-reviewer | Security analysis | Before commits |
-| build-error-resolver | Fix build errors | When build fails |
-| e2e-runner | E2E testing | Critical user flows |
-| refactor-cleaner | Dead code cleanup | Code maintenance |
-| doc-updater | Documentation | Updating docs |
-
-## Immediate Agent Usage
-
-No user prompt needed:
-1. Complex feature requests - Use **planner** agent
-2. Code just written/modified - Use **code-reviewer** agent
-3. Bug fix or new feature - Use **tdd-guide** agent
-4. Architectural decision - Use **architect** agent
-
-## Parallel Task Execution
-
-ALWAYS use parallel Task execution for independent operations:
-
-```markdown
-# GOOD: Parallel execution
-Launch 3 agents in parallel:
-1. Agent 1: Security analysis of auth.ts
-2. Agent 2: Performance review of cache system
-3. Agent 3: Type checking of utils.ts
-
-# BAD: Sequential when unnecessary
-First agent 1, then agent 2, then agent 3
+```
+User Request → Orchestrator (Gemini) → Execution Plan → Execute Agents
 ```
 
-## Multi-Perspective Analysis
+## Available Agents
 
-For complex problems, use split role sub-agents:
-- Factual reviewer
-- Senior engineer
-- Security expert
-- Consistency reviewer
-- Redundancy checker
+| Agent | MCP Model | When to Use |
+|-------|-----------|-------------|
+| orchestrator | Gemini | FIRST for all non-trivial requests |
+| planner | Gemini | Complex features, step-by-step planning |
+| architect | Gemini | System design, ADRs |
+| database-architect | Gemini | Schema, migrations, queries |
+| frontend-engineer | Gemini | UI components, pages |
+| ui-designer | Gemini | Design system, visual decisions |
+| backend-engineer | Claude | API routes, business logic |
+| api-designer | Claude | REST design, OpenAPI specs |
+| test-engineer | Claude | Unit, integration, E2E tests |
+| tdd-guide | Claude | Test-driven development workflow |
+| code-reviewer | o3-mini | Code quality review |
+| security-reviewer | o3-mini | Vulnerability detection |
+| performance-optimizer | o3 | Bottleneck analysis |
+| researcher | GPT-4o | Documentation, web search |
+| devops-engineer | Claude | CI/CD, Docker, deployment |
+| error-resolver | Claude | Bug fixing, debugging |
+| refactor-cleaner | Claude | Code cleanup, restructuring |
+| e2e-runner | Claude | E2E testing specialist |
+| doc-updater | Claude | Documentation updates |
+| domain-architect | Gemini | Generate CLAUDE.md + domain files |
+| domain-sync | Claude | Sync domain files with code |
+
+## Parallel Execution
+
+ALWAYS parallelize independent tasks:
+
+```
+# GOOD: Parallel
+Phase 1:
+  - planner (Gemini): Create plan
+  - database-architect (Gemini): Design schema
+  [Both run simultaneously]
+
+# BAD: Sequential when unnecessary
+First planner, then database-architect
+```
+
+## Checkpoints
+
+At checkpoints, re-invoke orchestrator:
+- Review progress
+- Adjust remaining plan
+- Add/remove tasks as needed

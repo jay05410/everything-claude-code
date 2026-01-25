@@ -43,6 +43,17 @@ program
       }
     }
 
+    // Copy scripts folder (hooks depend on these)
+    const scriptsDir = join(packageRoot, 'scripts');
+    const destScriptsDir = join(targetDir, 'scripts');
+    if (existsSync(scriptsDir)) {
+      if (!existsSync(destScriptsDir)) {
+        mkdirSync(destScriptsDir, { recursive: true });
+      }
+      copyDirRecursive(scriptsDir, destScriptsDir);
+      console.log('Copied hook scripts to:', destScriptsDir);
+    }
+
     console.log('Setup complete!');
     console.log('\nNext steps:');
     console.log('1. Configure your stack in ~/.claude/config/stack.yaml');

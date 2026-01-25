@@ -1,51 +1,98 @@
 ---
 name: _base
-description: Common rules and patterns for all agents. This file is referenced by other agents.
+description: Common rules and patterns for all agents. Referenced by other agents.
 ---
 
 # Base Agent Guidelines
 
 ## Stack Reference
 
-All version and tech stack information is centralized in `config/stack.yaml`.
-Never hardcode versions - always reference the config file.
+All tech stack info in `config/stack.yaml`. Never hardcode versions.
 
 ## MCP Model Integration
 
-When an agent is assigned a non-Claude model (see `agent_models` in stack.yaml):
+Agents use different models via MCP based on task type:
+
+| Agent Type | MCP | Tools |
+|------------|-----|-------|
+| Planning, Architecture | gemini | `mcp__gemini__generateContent` |
+| Frontend/UI | gemini | `mcp__gemini__generateContent` |
+| Code Review, Security | openai-o3-mini | `mcp__openai__chat` |
+| Deep Analysis | openai-o3 | `mcp__openai__chat` |
+| Research | openai-gpt4o | `mcp__openai__chat` |
+
+### Invoking MCP Models
 
 ```
-gemini    -> Use gemini MCP tools: gemini_generate_text, gemini_analyze_image
-openai    -> Use openai MCP tools: ask_openai, openai_chat
-o3/o3-mini -> Use o3 MCP tools: o3_reason, o3_analyze
+For Gemini tasks:
+Use mcp__gemini__generateContent with your prompt
+
+For OpenAI tasks:
+Use mcp__openai__chat with model parameter (gpt-4o, o3-mini, o3)
 ```
+
+### Model Selection by Task
+
+| Task | Model | Reason |
+|------|-------|--------|
+| Planning, decomposition | Gemini | Large context, structured output |
+| UI/UX design decisions | Gemini | Visual understanding |
+| Code review | o3-mini | Fast logical analysis |
+| Security analysis | o3-mini | Pattern detection |
+| Architecture decisions | o3 | Deep reasoning |
+| Complex debugging | o3 | Multi-step reasoning |
+| Web search, docs lookup | GPT-4o | Tool use, browsing |
+
+## Agent Delegation
+
+When delegating to subagents:
+
+```markdown
+**TASK**: [Atomic, specific goal]
+**EXPECTED OUTCOME**: [Concrete deliverables]  
+**TOOLS**: [Tool whitelist]
+**MUST DO**: [Requirements]
+**MUST NOT DO**: [Forbidden actions]
+**CONTEXT**: [File paths, patterns]
+```
+
+## Available Agents
+
+| Agent | Purpose | When to Use |
+|-------|---------|-------------|
+| `explore` | Codebase search | Finding code, understanding structure |
+| `librarian` | External docs | Library usage, best practices |
+| `oracle` | Deep analysis | Architecture, debugging |
+| `frontend-ui-ux-engineer` | UI work | Visual/styling changes |
+| `document-writer` | Docs | README, API docs |
+| `planner` | Planning | Feature breakdown |
+| `architect` | Design | System architecture |
 
 ## Output Standards
 
-1. **Language**: All agent outputs in English
+1. **Language**: English
 2. **Format**: Markdown with clear headers
-3. **Code**: Include file paths, use fenced code blocks with language tags
-4. **Brevity**: Be concise, avoid repetition
+3. **Code**: Include file paths, fenced blocks with language
+4. **Brevity**: Concise, no repetition
 
 ## Tool Usage
 
-| Task | Preferred Tools |
-|------|-----------------|
+| Task | Tools |
+|------|-------|
 | Read code | Read, Grep, Glob |
-| Edit code | Edit (prefer over Write for existing files) |
+| Edit code | Edit (prefer over Write) |
 | Run commands | Bash |
-| Search codebase | Grep, ast-grep |
-| Type checking | lsp_diagnostics |
+| Search | Grep, ast-grep |
+| Type check | lsp_diagnostics |
 
-## Code Quality Rules
+## Code Quality
 
-Reference `config/stack.yaml` standards section:
-- File size: 200-400 lines typical, 800 max
-- Function size: 50 lines max
-- Nesting depth: 4 levels max
-- Test coverage: 80% minimum
+- File: 200-400 lines typical, 800 max
+- Function: 50 lines max
+- Nesting: 4 levels max
+- Coverage: 80% minimum
 
-## Immutability Pattern (CRITICAL)
+## Immutability (CRITICAL)
 
 ```typescript
 // WRONG
@@ -57,23 +104,11 @@ const updated = { ...user, name: 'New' }
 const newItems = [...items, newItem]
 ```
 
-## Error Handling
+## Verification
 
-```typescript
-try {
-  const result = await operation()
-  return { success: true, data: result }
-} catch (error) {
-  console.error('Context:', error)
-  return { success: false, error: 'User-friendly message' }
-}
-```
-
-## Verification Checklist
-
-Before marking task complete:
-- [ ] Code compiles (lsp_diagnostics clean)
-- [ ] Tests pass (if applicable)
-- [ ] No console.log in production code
+Before marking complete:
+- [ ] lsp_diagnostics clean
+- [ ] Tests pass
+- [ ] No console.log
 - [ ] No hardcoded secrets
-- [ ] Follows existing patterns in codebase
+- [ ] Follows existing patterns
