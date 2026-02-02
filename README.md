@@ -49,91 +49,69 @@ All configuration happens in **two files**:
 
 ---
 
-## MCP Setup (One-Time)
+## MCP Setup (One-Time, Optional)
 
-**Note:** MCP is optional. This plugin works with Claude's built-in models (Opus, Sonnet, Haiku) without MCP.
+**Note:** MCP is optional. This plugin works with Claude's built-in models (Opus, Sonnet, Haiku) without MCP configuration.
 
-### Step 1: Open Config File (Easiest Method)
+### Config File Location
 
-1. **Open Claude Desktop app**
-2. **Menu**: `Claude` → `Settings` (or press `Cmd + ,` on Mac / `Ctrl + ,` on Windows)
-3. **Left sidebar**: Click `Developer`
-4. **Click**: `Edit Config` button
-
-This automatically opens the correct MCP configuration file!
-
-### Step 2: Add MCP Servers
-
-Paste this configuration into the file:
-
-```json
-{
-  "mcpServers": {
-    "gemini": {
-      "command": "npx",
-      "args": ["-y", "github:aliargun/mcp-server-gemini"],
-      "env": {
-        "GEMINI_API_KEY": "your-actual-gemini-key-here"
-      }
-    },
-    "openai": {
-      "command": "npx",
-      "args": ["-y", "@mzxrai/mcp-openai@latest"],
-      "env": {
-        "OPENAI_API_KEY": "your-actual-openai-key-here"
-      }
-    },
-    "glm": {
-      "command": "npx",
-      "args": ["-y", "@zhipuai/mcp-server"],
-      "env": {
-        "ZHIPUAI_API_KEY": "your-actual-glm-key-here"
-      }
-    }
-  }
-}
-```
-
-### Step 3: Get API Keys
-
-Replace `"your-actual-*-key-here"` with real API keys:
-
-- **Gemini** (Free): [Get Key](https://aistudio.google.com/apikey) - 60 req/min, 1,500/day
-- **OpenAI** (Paid): [Get Key](https://platform.openai.com/api-keys) - GPT-4o, o1, o3
-- **GLM** (Paid): [Get Key](https://open.bigmodel.cn/) - 30% cheaper
-
-### Step 4: Save and Restart
-
-1. **Save** the config file (`Cmd + S` / `Ctrl + S`)
-2. **Quit** Claude Desktop completely (`Cmd + Q` / `Alt + F4`)
-3. **Restart** Claude Desktop
-
-### Step 5: Verify (Optional)
-
-In Claude Desktop: `Settings` → `Developer` → Check if MCP servers are listed.
-
-<details>
-<summary><b>Alternative: Manual File Location</b></summary>
-
-If you prefer to edit the file manually:
-
-**macOS:**
+**All platforms (Claude Code CLI):**
 ```bash
-~/Library/Application Support/Claude/claude_desktop_config.json
+~/.claude/settings.json
 ```
 
-**Windows:**
-```bash
-%APPDATA%\Claude\claude_desktop_config.json
-```
+### Setup Steps
 
-**Linux:**
-```bash
-~/.config/claude/claude_desktop_config.json
-```
+1. **Edit the config file:**
+   ```bash
+   nano ~/.claude/settings.json
+   # or use your preferred editor
+   ```
 
-Create the file if it doesn't exist, then add the JSON configuration above.
-</details>
+2. **Add `mcpServers` section:**
+   ```json
+   {
+     "mcpServers": {
+       "gemini": {
+         "command": "npx",
+         "args": ["-y", "github:aliargun/mcp-server-gemini"],
+         "env": {
+           "GEMINI_API_KEY": "your-actual-gemini-key-here"
+         }
+       },
+       "openai": {
+         "command": "npx",
+         "args": ["-y", "@mzxrai/mcp-openai@latest"],
+         "env": {
+           "OPENAI_API_KEY": "your-actual-openai-key-here"
+         }
+       },
+       "glm": {
+         "command": "npx",
+         "args": ["-y", "@zhipuai/mcp-server"],
+         "env": {
+           "ZHIPUAI_API_KEY": "your-actual-glm-key-here"
+         }
+       }
+     }
+   }
+   ```
+
+3. **Get API Keys:**
+   - **Gemini** (Free): [aistudio.google.com/apikey](https://aistudio.google.com/apikey) - 60 req/min, 1,500/day
+   - **OpenAI** (Paid): [platform.openai.com/api-keys](https://platform.openai.com/api-keys) - GPT-4o, o1, o3
+   - **GLM** (Paid): [open.bigmodel.cn](https://open.bigmodel.cn/) - 30% cheaper
+
+4. **Save and restart:**
+   - Save the file
+   - Exit Claude Code session
+   - Start new session (MCP servers load automatically)
+
+5. **Verify (optional):**
+   ```bash
+   # Check config is valid JSON
+   python3 -m json.tool ~/.claude/settings.json
+   ```
 
 ---
 
