@@ -1,0 +1,155 @@
+schema:
+  version: "1.0"
+  description: "Schema for workflow state tracking in frontmatter"
+
+required_fields:
+  - task_id
+  - task_type
+  - title
+  - status
+  - workflow
+  - current_step
+
+fields:
+  task_id:
+    type: "string"
+    format: "uuid"
+    description: "Unique identifier for the task"
+
+  task_type:
+    type: "string"
+    enum: ["feature", "bugfix", "refactor", "review", "custom"]
+    description: "Type of task being tracked"
+
+  title:
+    type: "string"
+    max_length: 100
+    description: "Human-readable task title"
+
+  description:
+    type: "string"
+    description: "Brief description of the task"
+
+  status:
+    type: "string"
+    enum: ["pending", "in_progress", "blocked", "completed", "cancelled"]
+    description: "Current status of the task"
+
+  started_at:
+    type: "datetime"
+    nullable: true
+    description: "When the task was started"
+
+  completed_at:
+    type: "datetime"
+    nullable: true
+    description: "When the task was completed"
+
+  blocked_reason:
+    type: "string"
+    nullable: true
+    description: "Reason if task is blocked"
+
+  workflow:
+    type: "string"
+    description: "Name of the workflow being executed"
+
+  current_phase:
+    type: "integer"
+    min: 1
+    description: "Current phase number"
+
+  total_phases:
+    type: "integer"
+    min: 1
+    description: "Total number of phases"
+
+  current_step:
+    type: "string"
+    pattern: "^step-\\d{2}$"
+    description: "Current step identifier"
+
+  steps_completed:
+    type: "array"
+    items:
+      type: "string"
+    description: "List of completed step identifiers"
+
+  checkpoints_passed:
+    type: "array"
+    items:
+      type: "string"
+    description: "List of passed checkpoint identifiers"
+
+  agents_invoked:
+    type: "array"
+    items:
+      type: "string"
+    description: "List of agents that have been invoked"
+
+  current_agent:
+    type: "string"
+    nullable: true
+    description: "Currently active agent"
+
+  session_ids:
+    type: "object"
+    description: "Map of agent to session ID for continuity"
+
+  artifacts_created:
+    type: "array"
+    items:
+      type: "string"
+    description: "List of artifacts created"
+
+  files_modified:
+    type: "array"
+    items:
+      type: "string"
+    description: "List of files modified"
+
+  files_created:
+    type: "array"
+    items:
+      type: "string"
+    description: "List of files created"
+
+  user_skill_level:
+    type: "string"
+    enum: ["beginner", "intermediate", "expert"]
+    default: "intermediate"
+    description: "User's skill level for response adaptation"
+
+  yolo_mode:
+    type: "boolean"
+    default: false
+    description: "Skip confirmations and proceed automatically"
+
+state_transitions:
+  pending:
+    allowed_next: ["in_progress", "cancelled"]
+  in_progress:
+    allowed_next: ["blocked", "completed", "cancelled"]
+  blocked:
+    allowed_next: ["in_progress", "cancelled"]
+  completed:
+    allowed_next: []
+  cancelled:
+    allowed_next: []
+
+update_rules:
+  - field: "updated_at"
+    trigger: "any_change"
+    action: "set_current_timestamp"
+  
+  - field: "started_at"
+    trigger: "status_change_to_in_progress"
+    action: "set_current_timestamp_if_null"
+  
+  - field: "completed_at"
+    trigger: "status_change_to_completed"
+    action: "set_current_timestamp"
+  
+  - field: "steps_completed"
+    trigger: "step_complete"
+    action: "append_step_id"

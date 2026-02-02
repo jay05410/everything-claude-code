@@ -1,15 +1,7 @@
 {
   "mcpServers": {
-    "_comment": "=== MULTI-MODEL AGENT TEAM ===",
-    
-    "openai": {
-      "command": "npx",
-      "args": ["-y", "@mzxrai/mcp-openai@latest"],
-      "env": {
-        "OPENAI_API_KEY": "YOUR_OPENAI_API_KEY"
-      },
-      "description": "OpenAI models - GPT-4o (researcher), o3-mini (code-reviewer, security-reviewer), o3 (performance-optimizer)"
-    },
+    "_comment": "=== MULTI-MODEL ORCHESTRATION ===",
+    "_comment_strategy": "See config/stack.yaml for complete model assignment strategy",
 
     "gemini": {
       "command": "npx",
@@ -17,7 +9,25 @@
       "env": {
         "GEMINI_API_KEY": "YOUR_GEMINI_API_KEY"
       },
-      "description": "Gemini models - planner, architect, frontend-engineer, ui-designer, database-architect, accessibility-expert, publisher"
+      "description": "Gemini 3 Pro (frontend, architecture, 2M context) + Flash (docs, visual analysis)"
+    },
+
+    "openai": {
+      "command": "npx",
+      "args": ["-y", "@mzxrai/mcp-openai@latest"],
+      "env": {
+        "OPENAI_API_KEY": "YOUR_OPENAI_API_KEY"
+      },
+      "description": "GPT-5.2 - Analysis, design, verification, code review, security analysis"
+    },
+
+    "glm": {
+      "command": "npx",
+      "args": ["-y", "@zhipuai/mcp-server"],
+      "env": {
+        "ZHIPUAI_API_KEY": "YOUR_ZHIPUAI_API_KEY"
+      },
+      "description": "GLM-4.7 - Code generation specialist (30% token savings)"
     },
 
     "_comment2": "=== DEVELOPMENT TOOLS ===",
